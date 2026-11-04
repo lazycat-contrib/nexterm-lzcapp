@@ -1,0 +1,41 @@
+version: 1
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: dist/application.lpk
+  target_arch: amd64
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: image
+    image: nexterm
+build:
+  toolchains: []
+  run_buildscript: false
+images:
+  - id: nexterm
+    target: service
+    service: nexterm
+    source: nexterm/aio
+    channel: custom
+    sort: semver
+    # Upstream only publishes BETA-tagged releases (1.2.2-BETA); the stable
+    # channel cannot resolve a suffixed tag, so match it explicitly.
+    tag_regex: '^v?[0-9]+[.][0-9]+[.][0-9]+-BETA$'
+    version_regex: '^(?P<version>[0-9]+[.][0-9]+[.][0-9]+)-BETA$'
+    version_template: '{version}'
+    delivery:
+      mode: mirror
+      require_digest_match: true
+release:
+  use_github_release_notes: true
+  store_changelog_format: plain
+stores:
+  official:
+    enabled: false
+  private:
+    enabled: false
+    name: Nexterm
+    skip_if_version_exists: true

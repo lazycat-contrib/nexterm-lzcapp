@@ -1,0 +1,35 @@
+application:
+  subdomain: nexterm
+  multi_instance: false
+  # Nexterm ships its own login page and user accounts, so it authenticates
+  # itself. Git/SSH-style clients are not involved, but keeping it public
+  # avoids a second login layer in front of the app's own session handling.
+  public_path:
+    - /
+  upstreams:
+    - location: /
+      backend: http://nexterm:6989/
+services:
+  nexterm:
+    # upstream: nexterm/aio:1.2.2-BETA
+    image: docker.1ms.run/nexterm/aio:1.2.2-BETA
+    environment:
+      # Nexterm encrypts stored credentials with this key. Pin it so the key
+      # survives container rebuilds; a new key would make saved data unreadable.
+      - ENCRYPTION_KEY={{ printf "%x" (stable_secret "nexterm_encryption_key") }}
+      - SERVER_PORT=6989
+    binds:
+      - /lzcapp/var/data:/app/data
+usage: |
+  Nexterm 是自托管的服务器管理面板：在浏览器里统一管理 SSH / VNC / RDP 连接，
+  还带 SFTP 文件管理、代码片段、会话录制与连接监控。
+
+  首次打开会进入初始化页面，**第一个注册的账号自动成为管理员**，没有内置口令。
+
+  说明：
+    - 应用自带账号体系与登录页，直接对外开放由 Nexterm 自己的登录页鉴权，所以使用 public_path。
+    - 数据库、日志与会话录制都在 data 目录，随应用持久化保留。
+    - 容器使用桥接网络。连接宿主机自身或依赖 Wake-on-LAN 时，
+      官方建议使用 host 网络；此处未启用，如需此类能力请自行调整。
+    - 上游当前只发布 BETA 构建（1.2.2-BETA），请留意其稳定性并做好数据备份。
+    - 未做实机验证。

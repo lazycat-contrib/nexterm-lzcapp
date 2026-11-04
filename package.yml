@@ -1,0 +1,17 @@
+package: community.lazycat.app.nexterm
+name: Nexterm
+description: "Self-hosted server management panel: SSH, VNC and RDP connections, SFTP, snippets and session recording in one web UI."
+version: 1.2.2
+min_os_version: "1.5.0"
+homepage: https://nexterm.dev
+author: gnmyt
+license: MIT
+permissions:
+  required: []
+locales:
+  zh:
+    name: Nexterm
+    description: "自托管的服务器管理面板：在浏览器里统一管理 SSH / VNC / RDP 连接，支持 SFTP、代码片段与会话录制。"
+  en:
+    name: Nexterm
+    description: "Self-hosted server management panel: SSH, VNC and RDP connections, SFTP, snippets and session recording in one web UI."
